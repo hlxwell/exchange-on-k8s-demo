@@ -1,0 +1,4 @@
+adapter: postgresql
+database: exchange-demo-dev
+username: postgres
+password:

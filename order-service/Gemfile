@@ -1,0 +1,6 @@
+source 'https://gems.ruby-china.com'
+
+gem 'sinatra'
+gem 'activerecord'
+gem 'pg'
+gem 'rake'

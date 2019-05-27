@@ -1,0 +1,14 @@
+require "bundler/setup"
+require "active_record"
+require "yaml"
+require "logger"
+
+include ActiveRecord::Tasks
+
+task :default => :migrate
+task :environment do
+  ActiveRecord::Base.establish_connection(YAML::load(File.open("config/database.yml")))
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
+end
+
+load "active_record/railties/databases.rake"

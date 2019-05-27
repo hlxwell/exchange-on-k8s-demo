@@ -1,0 +1,21 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./tmp/redis:/data
+  db-migrator:
+    build: ./db-migrator
+    command: "rake db:reset && rake db:setup"
+    depends_on:
+      - db
+      - redis
