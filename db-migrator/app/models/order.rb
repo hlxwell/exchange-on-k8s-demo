@@ -9,6 +9,8 @@ class Order < ActiveRecord::Base
   scope :done, -> { where(status: "done") }
 
   validates :volume, numericality: {greater_than: 0}, on: :create
+  validate :check_affordability_for_buy_order, on: :create, if: :buy_order?
+  validate :check_affordability_for_sell_order, on: :create, if: :sell_order?
 
   before_create do
     self.left_volume = volume # init volume
@@ -20,6 +22,23 @@ class Order < ActiveRecord::Base
 
   after_create do
     strike_and_create_trades
+  end
+
+  # for BUY order, make sure it has money.
+  def check_affordability_for_buy_order
+    total_price = self.price * self.volume
+    user_balance = self.user.balance_in(sell_currency)
+    if user_balance < total_price
+      errors.add :volume, "is less than user balance. #{user_balance} < request: #{total_price}"
+    end
+  end
+
+  # for SELL order, make sure it has enough coin.
+  def check_affordability_for_sell_order
+    user_balance = self.user.balance_in(buy_currency)
+    if user_balance < self.volume
+      errors.add :volume, "is less than user balance. #{user_balance} < request: #{self.amount}"
+    end
   end
 
   # strike only for volume
@@ -63,6 +82,14 @@ class Order < ActiveRecord::Base
         )
       end
     end
+  end
+
+  def buy_currency
+    self.pair.scan(/\w{3}/).first
+  end
+
+  def sell_currency
+    self.pair.scan(/\w{3}/).last
   end
 
   def buy_order?
