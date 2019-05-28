@@ -15,9 +15,8 @@ class User < ActiveRecord::Base
 
   validates :email, uniqueness: true
 
-  def self.register(email, password)
-    u = new(email: email, password: BCrypt::Password.create(password))
-    u.save
+  def self.register!(email, password)
+    create!(email: email, password: BCrypt::Password.create(password))
   end
 
   def balance_in(currency)
