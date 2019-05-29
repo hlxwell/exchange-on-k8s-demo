@@ -12,6 +12,13 @@ before do
   STDOUT.puts "connected to database."
 end
 
-get "/api/v1/prices" do
-  Price.last.inspect
+# - POST /api/v1/account_entries {currency,credit_amount,credit_account_id,debit_amount,debit_account_id,entryable_type,entryable_id}
+# - GET /api/v1/my_balance?currency=*
+
+post "/api/v1/account_entries" do
+  puts "hello"
+end
+
+get "/api/v1/my_balance/:currency" do
+  params.inspect
 end

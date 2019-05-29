@@ -11,7 +11,7 @@ configure do
   STDOUT.puts "=== connected to database."
 end
 
-Dir[File.expand_path("./models", __FILE__) + "/*.rb"].each { |f| require f }
+Dir["./models/*.rb"].each { |f| require f }
 require "./app"
 
 run Sinatra::Application
