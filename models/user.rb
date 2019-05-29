@@ -1,4 +1,5 @@
 require "bcrypt"
+require "digest/sha1"
 
 class User < ActiveRecord::Base
   has_many :deposites
@@ -15,13 +16,23 @@ class User < ActiveRecord::Base
 
   validates :email, uniqueness: true
 
-  def self.register!(email, password)
-    create!(email: email, password: BCrypt::Password.create(password))
+  def self.register(email, password)
+    create(email: email, password: BCrypt::Password.create(password))
   end
 
   def balance_in(currency)
     credit = credit_account_entries.where(currency: currency).sum :credit_amount
     debit = debit_account_entries.where(currency: currency).sum :debit_amount
     credit - debit
+  end
+
+  def self.login(email, password)
+    u = User.find_by(email: email)
+    token = nil
+    if BCrypt::Password.new(u.password) == password
+      token = Digest::SHA1.hexdigest(Time.now.to_s)
+      u.update_attributes! token: token
+    end
+    token
   end
 end

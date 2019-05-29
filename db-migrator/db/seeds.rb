@@ -1,6 +1,6 @@
 # User ====================================
-User.register!("sample1@gmail.com", "fejkljr2ijfi")
-User.register!("sample2@gmail.com", "jd873kdufidj")
+User.register("sample1@gmail.com", "fejkljr2ijfi")
+User.register("sample2@gmail.com", "jd873kdufidj")
 
 # Deposite ===============================
 User.first.deposites.create!(currency: "btc", amount: 3)
