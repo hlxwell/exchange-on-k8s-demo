@@ -5,7 +5,6 @@
 - DELETE /api/v1/sessions {token}
 
 ## trade-service
-- POST /api/v1/trades {pair,price,amount,ask_order_id,bid_order_id}
 - GET /api/v1/trades
 
 ## order-service

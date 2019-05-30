@@ -1,4 +1,17 @@
-adapter: postgresql
-database: exchange-demo-dev
-username: postgres
-password:
+development:
+  adapter: postgresql
+  database: exchange-demo-dev
+  username: postgres
+  password:
+
+test:
+  adapter: postgresql
+  database: exchange-demo-test
+  username: postgres
+  password:
+
+production:
+  adapter: postgresql
+  database: exchange-demo-prod
+  username: postgres
+  password:
