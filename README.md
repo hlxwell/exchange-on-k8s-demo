@@ -8,9 +8,9 @@
 - GET /api/v1/trades
 
 ## order-service
-- POST /api/v1/orders {pair,side,price,volume}
+<!-- - POST /api/v1/orders {pair,side,price,volume} -->
 - GET /api/v1/orders
 
 ## account-service
-- POST /api/v1/account_entries {currency,credit_amount,credit_account_id,debit_amount,debit_account_id,entryable_type,entryable_id}
+<!-- - POST /api/v1/account_entries {currency,credit_amount,credit_account_id,debit_amount,debit_account_id,entryable_type,entryable_id} -->
 - GET /api/v1/my_balance?currency=*
