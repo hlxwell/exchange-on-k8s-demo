@@ -43,7 +43,7 @@ end
 get "/api/v1/sessions/:token/verify" do
   u = User.find_by(token: params[:token])
   if u.try(:persisted?)
-    {id: u.id, email: u.email}
+    {id: u.id, email: u.email}.to_json
   else
     status 401
   end
