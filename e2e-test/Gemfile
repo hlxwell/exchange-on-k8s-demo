@@ -1,0 +1,5 @@
+source 'https://gems.ruby-china.com'
+
+gem 'rest-client'
+gem 'activerecord'
+gem 'pg'
