@@ -11,7 +11,11 @@ ENV RACK_ENV production
 # Bundler
 ADD Gemfile $APP_HOME/Gemfile
 ADD Gemfile.lock $APP_HOME/Gemfile.lock
-RUN cd $APP_HOME && bundle install --without development test --deployment
+RUN cd $APP_HOME && \
+    apk add --no-cache make gcc && \
+    gem install bundler && \
+    bundle install --without development test --deployment
+
 # COPY FILES
 ADD . $APP_HOME
 
