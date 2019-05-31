@@ -12,6 +12,8 @@ end
 # For readiness check
 get "/" do
   User.count
+  status 200
+  "ok"
 end
 
 # - POST /api/v1/users {email, password} return {:id}
