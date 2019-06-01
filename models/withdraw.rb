@@ -3,6 +3,7 @@ class Withdraw < ActiveRecord::Base
   has_many :account_entries, as: :entryable
 
   validate :check_balance, on: :create
+  # TODO: Validate amount and currency
 
   after_create do
     AccountEntry.create!(

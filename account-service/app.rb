@@ -16,11 +16,26 @@ before do
 end
 
 # - POST /api/v1/accounts/deposite {currency,amount}
-# post "/api/v1/accounts/deposite" do
-# end
+post "/api/v1/accounts/deposite" do
+  deposite = @user.deposites.new(currency: params[:currency], amount: params[:amount])
+  if deposite.save
+    status 201
+    {id: deposite.id}.to_json
+  else
+    error 403, deposite.errors.messages.to_json
+  end
+end
+
 # - POST /api/v1/accounts/withdraw {currency,amount}
-# post "/api/v1/accounts/withdraw" do
-# end
+post "/api/v1/accounts/withdraw" do
+  withdraw = @user.withdraws.new(currency: params[:currency], amount: params[:amount])
+  if withdraw.save
+    status 201
+    {id: withdraw.id}.to_json
+  else
+    error 403, withdraw.errors.messages.to_json
+  end
+end
 
 # - GET /api/v1/my_balance?currency=*
 get "/api/v1/my_balance/:currency" do

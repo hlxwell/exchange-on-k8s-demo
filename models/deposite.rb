@@ -1,6 +1,8 @@
 class Deposite < ActiveRecord::Base
   belongs_to :user
   has_many :account_entries, as: :entryable
+  
+  # TODO: Validate amount and currency
 
   after_create do
     AccountEntry.create!(
