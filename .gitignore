@@ -1,0 +1,6 @@
+tmp/
+auth-service/models/*
+account-service/models/*
+order-service/models/*
+trade-service/models/*
+db-migrator/app/models/*
