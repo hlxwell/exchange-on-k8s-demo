@@ -15,6 +15,6 @@ RUN cd $APP_HOME && bundle install --without development test --deployment
 # COPY FILES
 ADD . $APP_HOME
 # Change config
-RUN mv $APP_HOME/config/database.yml.example $APP_HOME/config/database.yml
+RUN mv $APP_HOME/database.yml.example $APP_HOME/database.yml
 WORKDIR $APP_HOME
 CMD ["rake -T"]
