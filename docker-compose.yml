@@ -25,7 +25,7 @@ services:
   auth-service:
     build: ./auth-service
     command: "rackup"
-    env:
+    environment:
       RACK_ENV: production
     depends_on:
       - db-migrator
@@ -34,7 +34,7 @@ services:
   account-service:
     build: ./account-service
     command: "rackup"
-    env:
+    environment:
       RACK_ENV: production
     depends_on:
       - db-migrator
@@ -43,7 +43,7 @@ services:
   order-service:
     build: ./order-service
     command: "rackup"
-    env:
+    environment:
       RACK_ENV: production
     depends_on:
       - db-migrator
@@ -52,7 +52,7 @@ services:
   trade-service:
     build: ./trade-service
     command: "rackup"
-    env:
+    environment:
       RACK_ENV: production
     depends_on:
       - db-migrator
@@ -62,7 +62,7 @@ services:
   e2e-test:
     build: ./e2e-test
     command: "rake"
-    env:
+    environment:
       RACK_ENV: production
     depends_on:
       - auth-service
