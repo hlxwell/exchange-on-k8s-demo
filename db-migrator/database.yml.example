@@ -15,3 +15,5 @@ production:
   database: exchange-demo-prod
   username: postgres
   password:
+  host: <%= ENV['DB_HOST'] %>
+  port: <%= ENV['DB_PORT'] %>

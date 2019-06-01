@@ -4,9 +4,9 @@ gem 'rails', "~> 5.2.0"
 gem 'activerecord', "~> 5.2.0"
 gem 'bcrypt', ">= 3.1.12"
 gem 'pg'
+gem 'pry'
 
-group :development, :test do
-  gem 'pry'
+group :development, :test do  
   gem 'rspec'
   gem 'rspec-rails'
 end
