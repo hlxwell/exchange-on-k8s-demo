@@ -1,5 +1,6 @@
 version: '3'
 services:
+  # STAGE 1 ================================================
   db:
     image: postgres
     volumes:
@@ -13,9 +14,58 @@ services:
       - "6379:6379"
     volumes:
       - ./tmp/redis:/data
+  # STAGE 2 ================================================
   db-migrator:
     build: ./db-migrator
     command: "rake db:reset && rake db:setup"
     depends_on:
       - db
       - redis
+  # STAGE 3 ================================================
+  auth-service:
+    build: ./auth-service
+    command: "rackup"
+    env:
+      RACK_ENV: production
+    depends_on:
+      - db-migrator
+    ports:
+      - "3000:9292"
+  account-service:
+    build: ./account-service
+    command: "rackup"
+    env:
+      RACK_ENV: production
+    depends_on:
+      - db-migrator
+    ports:
+      - "3001:9292"
+  order-service:
+    build: ./order-service
+    command: "rackup"
+    env:
+      RACK_ENV: production
+    depends_on:
+      - db-migrator
+    ports:
+      - "3002:9292"
+  trade-service:
+    build: ./trade-service
+    command: "rackup"
+    env:
+      RACK_ENV: production
+    depends_on:
+      - db-migrator
+    ports:
+      - "3003:9292"
+  # STAGE 4 ================================================
+  e2e-test:
+    build: ./e2e-test
+    command: "rake"
+    env:
+      RACK_ENV: production
+    depends_on:
+      - auth-service
+      - account-service
+      - order-service
+      - trade-service
