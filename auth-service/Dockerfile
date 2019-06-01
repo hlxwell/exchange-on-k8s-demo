@@ -20,6 +20,7 @@ RUN apk --no-cache add \
   musl \
   openssl \
   openssl-dev \
+  postgresql-dev \
   zlib-dev
  
 RUN cd $APP_HOME && \
