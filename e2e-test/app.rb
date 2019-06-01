@@ -4,15 +4,17 @@ require "active_record"
 require "json"
 
 class APITest < Test::Unit::TestCase
-  # AUTH_SERVICE_URL = "http://auth-service:3000"
-  # ACCOUNT_SERVICE_URL = "http://account-service:3001"
-  # ORDER_SERVICE_URL = "http://order-service:3002"
-  # TRADE_SERVICE_URL = "http://trade-service:3003"
-
-  AUTH_SERVICE_URL = "http://localhost:3001"
-  ACCOUNT_SERVICE_URL = "http://localhost:3002"
-  ORDER_SERVICE_URL = "http://localhost:3003"
-  TRADE_SERVICE_URL = "http://localhost:3004"
+  if ENV["RACK_ENV"] == "production"
+    AUTH_SERVICE_URL = "http://auth-service:3000"
+    ACCOUNT_SERVICE_URL = "http://account-service:3001"
+    ORDER_SERVICE_URL = "http://order-service:3002"
+    TRADE_SERVICE_URL = "http://trade-service:3003"
+  else
+    AUTH_SERVICE_URL = "http://localhost:3001"
+    ACCOUNT_SERVICE_URL = "http://localhost:3002"
+    ORDER_SERVICE_URL = "http://localhost:3003"
+    TRADE_SERVICE_URL = "http://localhost:3004"
+  end
 
   def setup
     User.destroy_all
