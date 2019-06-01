@@ -11,10 +11,20 @@ ENV RACK_ENV production
 # Bundler
 ADD Gemfile $APP_HOME/Gemfile
 ADD Gemfile.lock $APP_HOME/Gemfile.lock
+
+RUN apk --no-cache add \
+  build-base \
+  ca-certificates \
+  curl \
+  libffi-dev \
+  musl \
+  openssl \
+  openssl-dev \
+  zlib-dev
+ 
 RUN cd $APP_HOME && \
-    apk add --no-cache make gcc && \
-    gem install bundler && \
-    bundle install --without development test --deployment
+  gem install bundler && \
+  bundle install --without development test --deployment
 
 # COPY FILES
 ADD . $APP_HOME
