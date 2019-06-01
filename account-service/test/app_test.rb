@@ -1,8 +1,8 @@
-require "./app"
-require "minitest/autorun"
+require "test/unit"
 require "rack/test"
+require_relative "../app"
 
-class AppTest < Minitest::Test
+class AppTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app

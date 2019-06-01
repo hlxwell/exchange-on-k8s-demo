@@ -2,7 +2,6 @@ require "sinatra"
 require "active_record"
 require "yaml"
 require "pg"
-require "pry"
 
 configure do
   config = YAML.load_file("database.yml")[ENV["RACK_ENV"]]

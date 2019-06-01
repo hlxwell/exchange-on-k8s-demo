@@ -2,7 +2,6 @@ require "sinatra"
 require "active_record"
 require "yaml"
 require "pg"
-require "pry"
 
 configure do
   config = YAML.load_file("database.yml")[ENV["RACK_ENV"]]
@@ -16,8 +15,11 @@ before do
   halt 401, {message: "User #{user_id} not found."}.to_json if @user.nil?
 end
 
-# - POST /api/v1/account_entries {currency,credit_amount,credit_account_id,debit_amount,debit_account_id,entryable_type,entryable_id}
-# post "/api/v1/account_entries" do
+# - POST /api/v1/accounts/deposite {currency,amount}
+# post "/api/v1/accounts/deposite" do
+# end
+# - POST /api/v1/accounts/withdraw {currency,amount}
+# post "/api/v1/accounts/withdraw" do
 # end
 
 # - GET /api/v1/my_balance?currency=*

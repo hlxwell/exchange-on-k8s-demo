@@ -1,14 +1,13 @@
 require "bundler/setup"
 require "active_record"
 require "yaml"
-require "logger"
 
-include ActiveRecord::Tasks
-
-task :default => :migrate
+task :default => :test
 task :environment do
-  ActiveRecord::Base.establish_connection(YAML::load(File.open("config/database.yml")))
-  ActiveRecord::Base.logger = Logger.new(STDOUT)
+  config = YAML.load_file("database.yml")[ENV["RACK_ENV"]]
+  ActiveRecord::Base.establish_connection(config)
 end
 
-load "active_record/railties/databases.rake"
+task :test => :environment do
+  require "./test/app_test.rb"
+end
