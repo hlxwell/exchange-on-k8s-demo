@@ -17,7 +17,7 @@ services:
   # STAGE 2 ================================================
   db-migrator:
     build: ./db-migrator
-    command: "rake db:reset && rake db:setup"
+    command: "rake db:create && rake db:migrate && rake db:seed"
     depends_on:
       - db
       - redis
