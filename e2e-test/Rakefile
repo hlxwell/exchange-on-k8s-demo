@@ -1,0 +1,13 @@
+require "active_record"
+require "yaml"
+
+task :environment do
+  config = YAML.load_file("database.yml")[ENV["RACK_ENV"]]
+  ActiveRecord::Base.establish_connection(config)
+  Dir["./models/*.rb"].each { |f| require f }
+end
+
+task :default => :test
+task :test => :environment do
+  require "./app"
+end
