@@ -2,12 +2,6 @@ require "test/unit"
 require "rest_client"
 require "active_record"
 require "json"
-require "yaml"
-
-# Load Data & Models
-config = YAML.load_file("database.yml")[ENV["RACK_ENV"]]
-ActiveRecord::Base.establish_connection(config)
-Dir["./models/*.rb"].each { |f| require f }
 
 class APITest < Test::Unit::TestCase
   def setup
