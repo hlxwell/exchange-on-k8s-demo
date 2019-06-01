@@ -13,3 +13,13 @@
 
 ## account-service
 - GET /api/v1/my_balance?currency=*
+
+# Alpine options
+
+```
+$ apk add docker --update-cache --repository http://mirrors.ustc.edu.cn/alpine/v3.4/main/ --allow-untrusted
+--update-cache
+--repository http://mirrors.ustc.edu.cn/alpine/v3.4/main/
+--allow-untrusted
+```
+
