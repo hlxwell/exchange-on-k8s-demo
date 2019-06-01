@@ -5,3 +5,10 @@ task :test do
   puts `cd order-service && RACK_ENV=development rake`
   puts `cd account-service && RACK_ENV=development rake`
 end
+
+task :bundle do
+  puts `cd auth-service && RACK_ENV=development bundle`
+  puts `cd trade-service && RACK_ENV=development bundle`
+  puts `cd order-service && RACK_ENV=development bundle`
+  puts `cd account-service && RACK_ENV=development bundle`
+end

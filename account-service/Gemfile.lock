@@ -46,6 +46,7 @@ DEPENDENCIES
   activerecord
   bcrypt
   pg
+  rack
   rack-test
   rake
   sinatra
