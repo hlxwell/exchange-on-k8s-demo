@@ -7,53 +7,75 @@ services:
       - ./tmp/db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-  redis:
-    image: redis
-    command: redis-server
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./tmp/redis:/data
   # STAGE 2 ================================================
   db-migrator:
     build: ./db-migrator
-    command: "rake db:create && rake db:migrate && rake db:seed"
+    command: 
+      - /bin/bash 
+      - -c 
+      - sleep 3 && bundle exec rake db:create; bundle exec rake db:migrate; bundle exec rake db:seed
+    environment:
+      ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
     depends_on:
       - db
-      - redis
+    deploy:
+      restart_policy:
+        condition: on-failure
   # STAGE 3 ================================================
   auth-service:
     build: ./auth-service
-    command: "rackup"
+    command:
+      - /bin/ash 
+      - -c 
+      - bundle exec rackup
     environment:
       RACK_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
     depends_on:
       - db-migrator
     ports:
       - "3000:9292"
   account-service:
     build: ./account-service
-    command: "rackup"
+    command:
+      - /bin/ash 
+      - -c 
+      - bundle exec rackup
     environment:
       RACK_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
     depends_on:
       - db-migrator
     ports:
       - "3001:9292"
   order-service:
     build: ./order-service
-    command: "rackup"
+    command:
+      - /bin/ash 
+      - -c 
+      - bundle exec rackup
     environment:
       RACK_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
     depends_on:
       - db-migrator
     ports:
       - "3002:9292"
   trade-service:
     build: ./trade-service
-    command: "rackup"
+    command:
+      - /bin/ash 
+      - -c 
+      - bundle exec rackup
     environment:
       RACK_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
     depends_on:
       - db-migrator
     ports:
@@ -61,9 +83,14 @@ services:
   # STAGE 4 ================================================
   e2e-test:
     build: ./e2e-test
-    command: "rake"
+    command:
+      - /bin/ash 
+      - -c 
+      - sleep 5; bundle exec rake
     environment:
       RACK_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
     depends_on:
       - auth-service
       - account-service
