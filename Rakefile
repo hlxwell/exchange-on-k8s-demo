@@ -1,5 +1,6 @@
 task :default => :test
 task :test do
+  puts `cd db-migrator && RAILS_ENV=development rspec`
   puts `cd auth-service && RACK_ENV=development rake`
   puts `cd trade-service && RACK_ENV=development rake`
   puts `cd order-service && RACK_ENV=development rake`

@@ -21,9 +21,21 @@ class User < ActiveRecord::Base
   end
 
   def balance_in(currency)
+    (total_balance_in(currency) - locked_balance_in_orders(currency))
+  end
+
+  def total_balance_in(currency)
     credit = credit_account_entries.where(currency: currency).sum :credit_amount
     debit = debit_account_entries.where(currency: currency).sum :debit_amount
-    credit - debit
+    (credit - debit)
+  end
+
+  # Left fund in orders
+  # btcjpy => [buy_currency, sell_currency] => buyer lock sell_currency, seller lock buy_currency
+  def locked_balance_in_orders(currency)
+    locked_in_buy_orders = buy_orders.active.where(sell_currency: currency).sum { |order| order.left_volume * order.price }
+    locked_in_sell_orders = sell_orders.active.where(buy_currency: currency).sum { |order| order.left_volume * order.price }
+    (locked_in_buy_orders + locked_in_sell_orders)
   end
 
   def self.login(email, password)

@@ -14,6 +14,9 @@ class Order < ActiveRecord::Base
 
   before_create do
     self.left_volume = volume # init volume
+
+    self.buy_currency = buy_currency()
+    self.sell_currency = sell_currency()
   end
 
   before_update do

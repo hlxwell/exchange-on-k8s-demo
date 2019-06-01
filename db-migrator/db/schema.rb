@@ -40,6 +40,8 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
   create_table "orders", force: :cascade do |t|
     t.string "side", null: false
     t.string "pair", null: false
+    t.string "buy_currency"
+    t.string "sell_currency"
     t.decimal "price", null: false
     t.decimal "volume", default: "0.0"
     t.decimal "left_volume", default: "0.0"
@@ -78,4 +80,5 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
 end
