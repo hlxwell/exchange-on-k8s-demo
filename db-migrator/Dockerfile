@@ -17,4 +17,3 @@ ADD . $APP_HOME
 # Change config
 RUN mv $APP_HOME/database.yml.example $APP_HOME/database.yml
 WORKDIR $APP_HOME
-CMD ["rake -T"]
