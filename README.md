@@ -23,3 +23,6 @@ $ apk add docker --update-cache --repository http://mirrors.ustc.edu.cn/alpine/v
 --allow-untrusted
 ```
 
+# TODO
+
+- Seems I didn't lock the money when user put the order.

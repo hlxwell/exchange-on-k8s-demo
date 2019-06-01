@@ -31,11 +31,11 @@ class AppTest < Test::Unit::TestCase
 
   def test_create_order_without_enough_money
     post "/api/v1/orders", {
-           side: "buy",
-           price: 10000,
-           pair: "btcjpy",
-           volume: 100,
-         }
+      side: "buy",
+      price: 10000,
+      pair: "btcjpy",
+      volume: 100,
+    }
     assert_equal 403, last_response.status
   end
 
@@ -46,7 +46,6 @@ class AppTest < Test::Unit::TestCase
       pair: "btcjpy",
       volume: 10,
     }
-
     get "/api/v1/orders"
     assert_equal 1, JSON.parse(last_response.body)["buy_orders"].size
     assert_equal 200, last_response.status
