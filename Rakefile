@@ -8,6 +8,7 @@ task :test do
 end
 
 task :link_model do
+  puts `cd e2e-test && rm -rf models && mkdir models && ln ../models/* models/`
   puts `cd db-migrator && rm -rf app/models && mkdir -p app/models && ln ../models/* app/models/`
   puts `cd auth-service && rm -rf models && mkdir models && ln ../models/* models/`
   puts `cd trade-service && rm -rf models && mkdir models && ln ../models/* models/`
