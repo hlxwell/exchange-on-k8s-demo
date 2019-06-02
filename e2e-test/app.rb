@@ -5,10 +5,10 @@ require "json"
 
 class APITest < Test::Unit::TestCase
   if ENV["RACK_ENV"] == "production"
-    AUTH_SERVICE_URL = "http://auth-service:3000"
-    ACCOUNT_SERVICE_URL = "http://account-service:3001"
-    ORDER_SERVICE_URL = "http://order-service:3002"
-    TRADE_SERVICE_URL = "http://trade-service:3003"
+    AUTH_SERVICE_URL = "http://auth-service:9292"
+    ACCOUNT_SERVICE_URL = "http://account-service:9292"
+    ORDER_SERVICE_URL = "http://order-service:9292"
+    TRADE_SERVICE_URL = "http://trade-service:9292"
   else
     AUTH_SERVICE_URL = "http://localhost:3001"
     ACCOUNT_SERVICE_URL = "http://localhost:3002"
