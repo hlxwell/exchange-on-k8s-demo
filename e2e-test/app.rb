@@ -2,6 +2,14 @@ require "test/unit"
 require "rest_client"
 require "active_record"
 require "json"
+require "benchmark"
+require "active_record"
+require "yaml"
+require "erb"
+
+config = YAML.load ERB.new(File.read("database.yml")).result
+ActiveRecord::Base.establish_connection(config[ENV["RACK_ENV"]])
+Dir["./models/*.rb"].each { |f| require f }
 
 class APITest < Test::Unit::TestCase
   if ENV["RACK_ENV"] == "production"
@@ -22,6 +30,48 @@ class APITest < Test::Unit::TestCase
     Trade.destroy_all
     Withdraw.destroy_all
     Deposite.destroy_all
+  end
+
+  def test_performance
+    # REGISTER USER =================
+    response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/users", {
+      "email" => "xxx@xxx.com",
+      "password" => "password",
+    })
+    user_id = JSON.parse(response.body)["id"]
+
+    # LOGIN USER =================
+    response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/sessions", {
+      "email" => "xxx@xxx.com",
+      "password" => "password",
+    })
+    token = JSON.parse(response.body)["token"]
+
+    # CHARGE MONEY ===============
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "jpy", amount: 10_0000}, {USER_ID: user_id})
+    assert_equal 201, response.code
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "btc", amount: 10}, {USER_ID: user_id})
+    assert_equal 201, response.code
+
+    Benchmark.bm do |x|
+      x.report do
+        100000.times do
+          RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
+            side: "sell",
+            price: 1_0000,
+            pair: "btcjpy",
+            volume: 10,
+          }, {USER_ID: user_id})
+
+          RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
+            side: "buy",
+            price: 1_0000,
+            pair: "btcjpy",
+            volume: 10,
+          }, {USER_ID: user_id})
+        end
+      end
+    end
   end
 
   def test_whole_flow

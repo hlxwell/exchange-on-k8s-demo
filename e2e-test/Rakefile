@@ -1,15 +1,6 @@
 require "bundler/setup"
-require "active_record"
-require "yaml"
-require "erb"
-
-task :environment do
-  config = YAML.load ERB.new(File.read("database.yml")).result
-  ActiveRecord::Base.establish_connection(config[ENV["RACK_ENV"]])
-  Dir["./models/*.rb"].each { |f| require f }
-end
 
 task :default => :test
-task :test => :environment do
+task :test do
   require "./app"
 end

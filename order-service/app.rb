@@ -3,10 +3,12 @@ require "active_record"
 require "yaml"
 require "pg"
 require "erb"
+require "logger"
 
 configure do
   config = YAML.load ERB.new(File.read("database.yml")).result
   ActiveRecord::Base.establish_connection(config[ENV["RACK_ENV"]])
+  # ActiveRecord::Base.logger = Logger.new(STDOUT) if ENV["RACK_ENV"] == "development"
   Dir["./models/*.rb"].each { |f| require f }
 end
 
