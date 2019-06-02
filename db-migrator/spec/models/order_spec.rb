@@ -33,6 +33,7 @@ describe "Order" do
     buy_order = @user.buy_orders.create pair: "btcjpy", price: 1_0000, volume: 10
     sell_order = @user.sell_orders.create pair: "btcjpy", price: 1_0000, volume: 10
     Trade.count.should eq 1
+
     buy_order.reload.status.should eq "done"
     sell_order.reload.status.should eq "done"
   end

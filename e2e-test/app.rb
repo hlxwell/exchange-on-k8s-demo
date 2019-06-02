@@ -55,7 +55,7 @@ class APITest < Test::Unit::TestCase
 
     Benchmark.bm do |x|
       x.report do
-        100000.times do
+        100.times do
           RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
             side: "sell",
             price: 1_0000,
