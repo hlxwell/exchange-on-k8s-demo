@@ -40,7 +40,7 @@ class Order < ActiveRecord::Base
   def check_affordability_for_sell_order
     user_balance = self.user.balance_in(buy_currency)
     if user_balance < self.volume
-      errors.add :volume, "is less than user balance. #{user_balance} < request: #{self.amount}"
+      errors.add :volume, "is less than user balance. #{user_balance} < request: #{self.volume}"
     end
   end
 
@@ -52,8 +52,10 @@ class Order < ActiveRecord::Base
                     self.left_volume
                   end
 
-    self.decrement! :left_volume, deal_volume
-    order.decrement! :left_volume, deal_volume
+    self.left_volume -= deal_volume
+    order.left_volume -= deal_volume
+    self.save!
+    order.save!
 
     [self.price, deal_volume]
   end
@@ -72,6 +74,7 @@ class Order < ActiveRecord::Base
 
     transaction do
       target_orders.each do |order|
+        # strike until current order is satisfied.
         break if self.left_volume <= 0
 
         deal_price, deal_volume = self.strike! order
