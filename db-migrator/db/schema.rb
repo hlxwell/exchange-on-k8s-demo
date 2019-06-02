@@ -25,6 +25,11 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
     t.string "currency", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["credit_account_id"], name: "index_account_entries_on_credit_account_id"
+    t.index ["currency"], name: "index_account_entries_on_currency"
+    t.index ["debit_account_id"], name: "index_account_entries_on_debit_account_id"
+    t.index ["entryable_id"], name: "index_account_entries_on_entryable_id"
+    t.index ["entryable_type"], name: "index_account_entries_on_entryable_type"
   end
 
   create_table "deposites", force: :cascade do |t|
@@ -35,6 +40,8 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
     t.string "status", default: "done"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["currency"], name: "index_deposites_on_currency"
+    t.index ["user_id"], name: "index_deposites_on_user_id"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -49,6 +56,14 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["buy_currency"], name: "index_orders_on_buy_currency"
+    t.index ["created_at"], name: "index_orders_on_created_at"
+    t.index ["pair"], name: "index_orders_on_pair"
+    t.index ["price"], name: "index_orders_on_price"
+    t.index ["sell_currency"], name: "index_orders_on_sell_currency"
+    t.index ["side"], name: "index_orders_on_side"
+    t.index ["status"], name: "index_orders_on_status"
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "trades", force: :cascade do |t|
@@ -62,6 +77,11 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
     t.string "pair", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["ask_order_id"], name: "index_trades_on_ask_order_id"
+    t.index ["bid_order_id"], name: "index_trades_on_bid_order_id"
+    t.index ["buyer_id"], name: "index_trades_on_buyer_id"
+    t.index ["pair"], name: "index_trades_on_pair"
+    t.index ["seller_id"], name: "index_trades_on_seller_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -70,6 +90,7 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_users_on_token"
   end
 
   create_table "withdraws", force: :cascade do |t|
@@ -79,6 +100,8 @@ ActiveRecord::Schema.define(version: 2019_05_27_160052) do
     t.string "status", default: "done"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["currency"], name: "index_withdraws_on_currency"
+    t.index ["user_id"], name: "index_withdraws_on_user_id"
   end
 
 end
