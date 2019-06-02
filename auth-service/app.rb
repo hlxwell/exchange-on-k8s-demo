@@ -2,10 +2,11 @@ require "sinatra"
 require "yaml"
 require "active_record"
 require "pg"
+require "erb"
 
 configure do
-  config = YAML.load_file("database.yml")[ENV["RACK_ENV"]]
-  ActiveRecord::Base.establish_connection(config)
+  config = YAML.load ERB.new(File.read("database.yml")).result
+  ActiveRecord::Base.establish_connection(config[ENV["RACK_ENV"]])
   Dir["./models/*.rb"].each { |f| require f }
 end
 
