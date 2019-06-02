@@ -4,3 +4,4 @@ account-service/models/*
 order-service/models/*
 trade-service/models/*
 db-migrator/app/models/*
+e2e-test/models/*
