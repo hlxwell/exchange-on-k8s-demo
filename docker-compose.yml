@@ -91,6 +91,9 @@ services:
       RACK_ENV: production
       DB_HOST: db
       DB_PORT: 5432
+    deploy:
+      restart_policy:
+        condition: on-failure
     depends_on:
       - auth-service
       - account-service
