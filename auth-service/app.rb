@@ -10,43 +10,25 @@ configure do
   Dir["./models/*.rb"].each { |f| require f }
 end
 
-# For readiness check
-get "/" do
-  User.count
-  status 200
-  "ok"
-end
-
-# - POST /api/v1/users {email, password} return {:id}
-post "/api/v1/users" do
-  email = params[:email]
-  password = params[:password]
-  user = User.register(email, password)
-  if user.persisted?
-    status 201
-    {id: user.id}.to_json
-  else
-    user.errors.to_json
+before do
+  # If request /health means only check readiness and liveness
+  if request.env["PATH_INFO"] == "/health"
+    User.count
+    halt 200, "STATUS 200"
   end
-end
 
-# - POST /api/v1/sessions {email, password} return {:token}
-post "/api/v1/sessions" do
-  email = params[:email]
-  password = params[:password]
-  token = User.login(email, password)
+  puts request.env.inspect
 
-  status 201
-  {token: token}.to_json
-end
+  # Check if user is valid.
+  token = request.env["HTTP_TOKEN"]
+  puts "=== Authenticate TOKEN: '#{token}' for PATH: '#{request.env["REQUEST_URI"]}'"
 
-# - GET /api/v1/sessions/{token}/verify
-get "/api/v1/sessions/:token/verify" do
-  u = User.find_by(token: params[:token])
+  halt 401, "Invalid Token" if token.nil?
+  u = User.find_by(token: token)
   if u.try(:persisted?)
-    status 200
-    {id: u.id, email: u.email}.to_json
+    response.headers["user-id"] = u.id
+    halt 200, {id: u.id, email: u.email}.to_json
   else
-    status 401
+    halt 401, "Invalid Token"
   end
 end

@@ -12,10 +12,17 @@ configure do
   Dir["./models/*.rb"].each { |f| require f }
 end
 
-before do
+before "/api/*" do
   user_id = request.env["HTTP_USER_ID"]
   @user = User.find_by(id: user_id)
   halt 401, {message: "User #{user_id} not found."}.to_json if @user.nil?
+end
+
+# For readiness check
+get "/" do
+  User.count
+  status 200
+  "ok"
 end
 
 # - POST /api/v1/orders {pair,side,price,volume}

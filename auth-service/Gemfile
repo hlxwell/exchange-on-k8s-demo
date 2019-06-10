@@ -1,4 +1,4 @@
-source 'https://gems.ruby-china.com'
+source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'activerecord'
@@ -8,3 +8,4 @@ gem 'bcrypt'
 gem 'rack-test'
 gem 'test-unit'
 gem 'rack'
+gem 'puma'

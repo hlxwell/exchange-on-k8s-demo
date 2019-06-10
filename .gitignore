@@ -6,3 +6,4 @@ trade-service/models/*
 db-migrator/app/models/*
 e2e-test/models/*
 */database.yml
+telepresence.log
