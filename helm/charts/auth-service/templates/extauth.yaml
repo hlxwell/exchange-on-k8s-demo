@@ -2,16 +2,14 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: {{ include "auth-service.fullname" . }}-ext-authz
-  # namespace: istio-system
 spec:
   workloadLabels:
     istio: ingressgateway
-    # app.kubernetes.io/name: account-service
   filters:
   - insertPosition:
       index: FIRST
     listenerMatch:
-      listenerType: GATEWAY # GATEWAY, ANY, SIDECAR_INBOUND
+      listenerType: GATEWAY
       listenerProtocol: ALL
     filterType: HTTP
     filterName: envoy.ext_authz
@@ -22,36 +20,19 @@ spec:
           cluster: outbound|9292||{{ include "auth-service.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
           timeout: 0.25s
           failure_mode_allow: false
-        # authorization_request:
-        #   allowed_headers:
-        #     patterns: 
-        #       - exact: x-qotm-session
-        #       - exact: token
-        #       - exact: authorization
-        #       # Authorization
-        #       # Cookie
-        #       # From
-        #       # Proxy-Authorization
-        #       # User-Agent
-        #       # X-Forwarded-For
-        #       # X-Forwarded-Host
-        #       # X-Forwarded-Proto
-        # authorization_response:
-        #   allowed_upstream_headers:
-        #     patterns: 
-        #       - exact: x-user-id
-        #       - exact: user-id
-        #       # Location
-        #       # Authorization
-        #       # Proxy-Authenticate
-        #       # Set-cookie
-        #       # WWW-Authenticate
-        #   allowed_client_headers':
-        #     patterns:
-        #       - exact: x-qotm-session
-        #       - exact: user-id
-        #       # Location
-        #       # Authorization
-        #       # Proxy-Authenticate
-        #       # Set-cookie
-        #       # WWW-Authenticate
+        authorization_request:
+          allowed_headers:
+            patterns: 
+              - exact: token
+              - exact: Authorization
+              - exact: User-Agent
+        authorization_response:
+          allowed_upstream_headers:
+            patterns: 
+              - exact: user_id
+              - exact: Location
+              - exact: Authorization
+          allowed_client_headers':
+            patterns:
+              - exact: Location
+              - exact: Authorization

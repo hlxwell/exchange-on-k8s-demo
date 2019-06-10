@@ -10,10 +10,6 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /api/v1/users
-        - uri:
-            prefix: /api/v1/sessions
-        - uri:
             prefix: /api/v1/accounts
       route:
         - destination:

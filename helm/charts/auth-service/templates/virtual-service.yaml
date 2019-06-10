@@ -8,24 +8,15 @@ spec:
   hosts:
     - exchange.memoryforcer.com
   http:
-    - route:
+    - match:
+        - url:
+            prefix: /
+        - uri:
+            prefix: /api/v1/users
+        - uri:
+            prefix: /api/v1/sessions
+      route:
       - destination:
           host: {{ include "auth-service.fullname" . }}
           port:
             number: 9292
-# ---
-# apiVersion: networking.istio.io/v1alpha3
-# kind: VirtualService
-# metadata:
-#   name: {{ include "auth-service.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
-# spec:
-#   gateways:
-#     - {{ include "auth-service.fullname" . }}-gateway
-#   hosts:
-#     - {{ include "auth-service.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
-#   http:
-#     - route:
-#       - destination:
-#           host: {{ include "auth-service.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
-#           port:
-#             number: 9292
