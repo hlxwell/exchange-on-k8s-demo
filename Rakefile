@@ -22,3 +22,14 @@ task :bundle do
   puts `cd order-service && RACK_ENV=development bundle`
   puts `cd account-service && RACK_ENV=development bundle`
 end
+
+task :build_and_push do
+  threads = []
+  ["e2e-test", "db-migrator", "auth-service", "trade-service", "order-service", "account-service"].each do |proj|
+    threads << Thread.new do
+      IO.popen("docker build -t gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj} ./#{proj}/", "r").each_line { |line| puts line }
+      IO.popen("gcloud docker -- push gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj}", "r").each_line { |line| puts line }
+    end
+  end
+  threads.each &:join
+end
