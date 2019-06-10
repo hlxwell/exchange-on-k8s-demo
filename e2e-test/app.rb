@@ -16,9 +16,9 @@ class APITest < Test::Unit::TestCase
     AUTH_SERVICE_URL = ACCOUNT_SERVICE_URL = ORDER_SERVICE_URL = TRADE_SERVICE_URL = "http://exchange.memoryforcer.com"
   elsif ENV["RACK_ENV"] == "production"
     AUTH_SERVICE_URL = ENV["AUTH_SERVICE_URL"] || "http://auth-service:9292"
-    ACCOUNT_SERVICE_URL = ENV["ACCOUNT_SERVICE_URL"] || "http://account-service:9292"
     ORDER_SERVICE_URL = ENV["ORDER_SERVICE_URL"] || "http://order-service:9292"
     TRADE_SERVICE_URL = ENV["TRADE_SERVICE_URL"] || "http://trade-service:9292"
+    ACCOUNT_SERVICE_URL = ENV["ACCOUNT_SERVICE_URL"] || "http://account-service:9292"
   elsif ENV["RACK_ENV"] == "development"
     AUTH_SERVICE_URL = "http://localhost:3001"
     ACCOUNT_SERVICE_URL = "http://localhost:3002"
@@ -36,15 +36,16 @@ class APITest < Test::Unit::TestCase
 
   def test_performance
     # REGISTER USER =================
+    email = "xxx#{rand(10000)}@xxx.com"
     response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/users", {
-      "email" => "xxx@xxx.com",
+      "email" => email,
       "password" => "password",
     })
     user_id = JSON.parse(response.body)["id"]
 
     # LOGIN USER =================
     response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/sessions", {
-      "email" => "xxx@xxx.com",
+      "email" => email,
       "password" => "password",
     })
     token = JSON.parse(response.body)["token"]
@@ -77,9 +78,10 @@ class APITest < Test::Unit::TestCase
   end
 
   def test_whole_flow
+    email = "xxx#{rand(10000)}@xxx.com"
     # REGISTER USER =================
     response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/users", {
-      "email" => "xxx@xxx.com",
+      "email" => email,
       "password" => "password",
     })
 
@@ -89,7 +91,7 @@ class APITest < Test::Unit::TestCase
 
     # LOGIN USER =================
     response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/sessions", {
-      "email" => "xxx@xxx.com",
+      "email" => email,
       "password" => "password",
     })
     token = JSON.parse(response.body)["token"]
