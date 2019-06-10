@@ -20,9 +20,8 @@ end
 
 # For readiness check
 get "/" do
-  User.count
   status 200
-  "ok"
+  "ok #{User.count}"
 end
 
 # - POST /api/v1/orders {pair,side,price,volume}

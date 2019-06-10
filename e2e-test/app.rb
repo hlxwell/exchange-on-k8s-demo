@@ -107,11 +107,11 @@ class APITest < Test::Unit::TestCase
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/jpy", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 10_0000, JSON.parse(response.body)["balance"].to_f
 
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
@@ -125,11 +125,11 @@ class APITest < Test::Unit::TestCase
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/jpy", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 0, JSON.parse(response.body)["balance"].to_f
 
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
@@ -150,7 +150,7 @@ class APITest < Test::Unit::TestCase
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
@@ -170,11 +170,11 @@ class APITest < Test::Unit::TestCase
     assert_equal 1, all_trades["sell_trades"].size
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/jpy", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 5_0000, JSON.parse(response.body)["balance"].to_f # 5_0000 jpy still be locked.
 
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
@@ -183,7 +183,7 @@ class APITest < Test::Unit::TestCase
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
     assert_equal 200, response.code
     assert_equal 1, JSON.parse(response.body)["balance"].to_f
   end

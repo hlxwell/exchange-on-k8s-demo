@@ -12,7 +12,7 @@
 - GET /api/v1/orders
 
 ## account-service
-- GET /api/v1/my_balance?currency=*
+- GET /api/v1/accounts/my_balance?currency=*
 
 # Alpine options
 

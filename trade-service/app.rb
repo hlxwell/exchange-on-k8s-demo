@@ -18,9 +18,8 @@ end
 
 # For readiness check
 get "/" do
-  User.count
   status 200
-  "ok"
+  "ok #{User.count}"
 end
 
 # - GET /api/v1/trades
