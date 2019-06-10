@@ -5,13 +5,13 @@ account-service:
   enabled: true
 
 order-service:
-  enabled: false
+  enabled: true
 
 trade-service:
-  enabled: false
+  enabled: true
 
 e2e-test:
-  enabled: false
+  enabled: true
 
 db-migrator:
   enabled: true

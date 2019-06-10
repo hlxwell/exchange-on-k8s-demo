@@ -9,8 +9,8 @@ spec:
     - exchange.memoryforcer.com
   http:
     - match:
-        - url:
-            prefix: /
+        - uri:
+            exact: /
         - uri:
             prefix: /api/v1/users
         - uri:
