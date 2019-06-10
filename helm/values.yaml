@@ -1,0 +1,25 @@
+auth-service:
+  enabled: true
+
+account-service:
+  enabled: true
+
+order-service:
+  enabled: false
+
+trade-service:
+  enabled: false
+
+e2e-test:
+  enabled: false
+
+db-migrator:
+  enabled: true
+
+postgresql:
+  enabled: true
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+  pgHbaConfiguration: |-
+    local all all trust
+    host all all localhost trust

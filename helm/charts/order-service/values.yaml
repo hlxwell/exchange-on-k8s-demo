@@ -1,0 +1,10 @@
+replicaCount: 2
+
+image:
+  repository: gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/order-service
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 9292

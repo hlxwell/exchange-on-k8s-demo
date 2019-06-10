@@ -1,0 +1,4 @@
+image:
+  repository: gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/db-migrator
+  tag: latest
+  pullPolicy: Always

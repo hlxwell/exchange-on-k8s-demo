@@ -1,0 +1,29 @@
+dependencies:
+  - name: auth-service
+    repository: auth-service
+    version: 0.1.0
+    condition: auth-service.enabled
+  - name: account-service
+    repository: account-service
+    version: 0.1.0
+    condition: account-service.enabled
+  - name: order-service
+    repository: order-service
+    version: 0.1.0
+    condition: order-service.enabled
+  - name: trade-service
+    repository: trade-service
+    version: 0.1.0
+    condition: trade-service.enabled
+  - name: db-migrator
+    repository: db-migrator
+    version: 0.1.0
+    condition: db-migrator.enabled
+  - name: e2e-test
+    repository: e2e-test
+    version: 0.1.0
+    condition: e2e-test.enabled
+  - name: postgresql
+    repository: stable/postgresql
+    version: 5.3.4
+    condition: postgresql.enabled
