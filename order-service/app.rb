@@ -36,8 +36,7 @@ post "/api/v1/orders" do
 
   order = orders.new(pair: params[:pair], price: params[:price], volume: params[:volume])
   if order.save
-    status 201
-    {id: order.id}.to_json
+    halt 201, {id: order.id}.to_json
   else
     error 403, order.errors.messages.to_json
   end

@@ -31,8 +31,6 @@ class APITest < Test::Unit::TestCase
   end
 
   def setup
-    return if ENV["MODE"] == "kubernetes"
-
     User.destroy_all
     Order.destroy_all
     Trade.destroy_all

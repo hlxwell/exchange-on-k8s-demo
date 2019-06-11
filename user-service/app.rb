@@ -20,10 +20,9 @@ post "/api/v1/users" do
   password = params[:password]
   user = User.register(email, password)
   if user.persisted?
-    status 201
-    {id: user.id}.to_json
+    halt 201, {id: user.id}.to_json
   else
-    user.errors.to_json
+    error 403, user.errors.to_json
   end
 end
 
@@ -32,19 +31,15 @@ post "/api/v1/sessions" do
   email = params[:email]
   password = params[:password]
   token = User.login(email, password)
-
-  status 201
-  {token: token}.to_json
+  halt 201, {token: token}.to_json
 end
 
 # - GET /api/v1/sessions/{token}/verify
 get "/api/v1/sessions/:token/verify" do
   u = User.find_by(token: params[:token])
   if u.try(:persisted?)
-    status 200
-    {id: u.id, email: u.email}.to_json
+    halt 200, {id: u.id, email: u.email}.to_json
   else
-    status 401
-    "Invalid Token"
+    error 401, "Invalid Token"
   end
 end

@@ -8,7 +8,12 @@ spec:
   hosts:
     - exchange.memoryforcer.com
   http:
-    - route:
+    - match:
+        - uri:
+            prefix: /api/v1/users
+        - uri:
+            prefix: /api/v1/sessions
+      route:
       - destination:
           host: {{ include "user-service.fullname" . }}
           port:
