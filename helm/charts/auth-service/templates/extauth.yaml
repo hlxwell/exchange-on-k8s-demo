@@ -32,7 +32,7 @@ spec:
               - exact: user_id
               - exact: Location
               - exact: Authorization
-          allowed_client_headers':
-            patterns:
-              - exact: Location
-              - exact: Authorization
+          # allowed_client_headers':
+          #   patterns:
+          #     - exact: Location
+          #     - exact: Authorization

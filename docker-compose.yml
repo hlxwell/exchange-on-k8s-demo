@@ -36,6 +36,20 @@ services:
       - db-migrator
     ports:
       - "3001:9292"
+  user-service:
+    build: ./user-service
+    command:
+      - /bin/ash 
+      - -c 
+      - bundle exec puma
+    environment:
+      RACK_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      - db-migrator
+    ports:
+      - "3002:9292"
   account-service:
     build: ./account-service
     command:
@@ -49,7 +63,7 @@ services:
     depends_on:
       - db-migrator
     ports:
-      - "3002:9292"
+      - "3003:9292"
   order-service:
     build: ./order-service
     command:
@@ -63,7 +77,7 @@ services:
     depends_on:
       - db-migrator
     ports:
-      - "3003:9292"
+      - "3004:9292"
   trade-service:
     build: ./trade-service
     command:
@@ -77,7 +91,7 @@ services:
     depends_on:
       - db-migrator
     ports:
-      - "3004:9292"
+      - "3005:9292"
   # STAGE 4 ================================================
   e2e-test:
     build: ./e2e-test
@@ -86,7 +100,7 @@ services:
       - -c 
       - sleep 5; bundle exec rake
     environment:
-      RACK_ENV: production
+      RACK_ENV: test
       DB_HOST: db
       DB_PORT: 5432
     restart: on-failure
@@ -95,3 +109,4 @@ services:
       - account-service
       - order-service
       - trade-service
+      - user-service

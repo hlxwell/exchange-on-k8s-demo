@@ -12,21 +12,25 @@ ActiveRecord::Base.establish_connection(config[ENV["RACK_ENV"]])
 Dir["./models/*.rb"].each { |f| require f }
 
 class APITest < Test::Unit::TestCase
-  if ENV["RACK_ENV"] == "test"
-    AUTH_SERVICE_URL = ACCOUNT_SERVICE_URL = ORDER_SERVICE_URL = TRADE_SERVICE_URL = "http://exchange.memoryforcer.com"
-  elsif ENV["RACK_ENV"] == "production"
+  if ENV["RACK_ENV"] == "production" # k8s
+    AUTH_SERVICE_URL = ACCOUNT_SERVICE_URL = ORDER_SERVICE_URL = TRADE_SERVICE_URL = USER_SERVICE_URL = "http://exchange.memoryforcer.com"
+  elsif ENV["RACK_ENV"] == "test" # docker compose
     AUTH_SERVICE_URL = ENV["AUTH_SERVICE_URL"] || "http://auth-service:9292"
     ORDER_SERVICE_URL = ENV["ORDER_SERVICE_URL"] || "http://order-service:9292"
     TRADE_SERVICE_URL = ENV["TRADE_SERVICE_URL"] || "http://trade-service:9292"
     ACCOUNT_SERVICE_URL = ENV["ACCOUNT_SERVICE_URL"] || "http://account-service:9292"
-  elsif ENV["RACK_ENV"] == "development"
+    USER_SERVICE_URL = ENV["USER_SERVICE_URL"] || "http://user-service:9292"
+  elsif ENV["RACK_ENV"] == "development" # local test
     AUTH_SERVICE_URL = "http://localhost:3001"
-    ACCOUNT_SERVICE_URL = "http://localhost:3002"
-    ORDER_SERVICE_URL = "http://localhost:3003"
-    TRADE_SERVICE_URL = "http://localhost:3004"
+    USER_SERVICE_URL = "http://localhost:3002"
+    ACCOUNT_SERVICE_URL = "http://localhost:3003"
+    ORDER_SERVICE_URL = "http://localhost:3004"
+    TRADE_SERVICE_URL = "http://localhost:3005"
   end
 
   def setup
+    return if ENV["RACK_ENV"] == "test"
+
     User.destroy_all
     Order.destroy_all
     Trade.destroy_all
@@ -35,25 +39,31 @@ class APITest < Test::Unit::TestCase
   end
 
   def test_performance
+    headers = {}
+
     # REGISTER USER =================
     email = "xxx#{rand(10000)}@xxx.com"
-    response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/users", {
+    response = RestClient.post("#{USER_SERVICE_URL}/api/v1/users", {
       "email" => email,
       "password" => "password",
     })
     user_id = JSON.parse(response.body)["id"]
 
     # LOGIN USER =================
-    response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/sessions", {
+    response = RestClient.post("#{USER_SERVICE_URL}/api/v1/sessions", {
       "email" => email,
       "password" => "password",
     })
     token = JSON.parse(response.body)["token"]
 
+    # Prepare HEADERS
+    headers[:user_id] = user_id
+    headers[:token] = token
+
     # CHARGE MONEY ===============
-    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "jpy", amount: 10_0000}, {USER_ID: user_id})
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "jpy", amount: 10_0000}, headers)
     assert_equal 201, response.code
-    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "btc", amount: 10}, {USER_ID: user_id})
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "btc", amount: 10}, headers)
     assert_equal 201, response.code
 
     Benchmark.bm do |x|
@@ -64,23 +74,25 @@ class APITest < Test::Unit::TestCase
             price: 1_0000,
             pair: "btcjpy",
             volume: 10,
-          }, {USER_ID: user_id})
+          }, headers)
 
           RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
             side: "buy",
             price: 1_0000,
             pair: "btcjpy",
             volume: 10,
-          }, {USER_ID: user_id})
+          }, headers)
         end
       end
     end
   end
 
   def test_whole_flow
+    return
+
     email = "xxx#{rand(10000)}@xxx.com"
     # REGISTER USER =================
-    response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/users", {
+    response = RestClient.post("#{USER_SERVICE_URL}/api/v1/users", {
       "email" => email,
       "password" => "password",
     })
@@ -90,7 +102,7 @@ class APITest < Test::Unit::TestCase
     assert_equal 201, response.code
 
     # LOGIN USER =================
-    response = RestClient.post("#{AUTH_SERVICE_URL}/api/v1/sessions", {
+    response = RestClient.post("#{USER_SERVICE_URL}/api/v1/sessions", {
       "email" => email,
       "password" => "password",
     })
@@ -98,22 +110,33 @@ class APITest < Test::Unit::TestCase
     assert token.size >= 40
     assert_equal 201, response.code
 
+    # Prepare HEADERS
+    headers[:user_id] = user_id
+    headers[:token] = token
+
     # VERIFY USER BY TOKEN =================
-    response = RestClient.get("#{AUTH_SERVICE_URL}/api/v1/sessions/#{token}/verify")
+    response = RestClient.get("#{USER_SERVICE_URL}/api/v1/sessions/#{token}/verify")
     assert_equal 200, response.code
 
+    # VERIFY AUTH SERVICE =================
+    response = RestClient.get("#{AUTH_SERVICE_URL}/api/v1/whatever-path", {}, headers)
+    assert_equal 200, response.code
+
+    response = RestClient.get("#{AUTH_SERVICE_URL}/api/v1/whatever-path", {}, {token: "wrong token"})
+    assert_equal 401, response.code
+
     # CHARGE MONEY =================
-    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "jpy", amount: 10_0000}, {USER_ID: user_id})
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "jpy", amount: 10_0000}, headers)
     assert_equal 201, response.code
-    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "btc", amount: 10}, {USER_ID: user_id})
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "btc", amount: 10}, headers)
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {}, headers)
     assert_equal 200, response.code
     assert_equal 10_0000, JSON.parse(response.body)["balance"].to_f
 
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {}, headers)
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
@@ -123,20 +146,20 @@ class APITest < Test::Unit::TestCase
       price: 1_0000,
       pair: "btcjpy",
       volume: 10,
-    }, {USER_ID: user_id})
+    }, headers)
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {}, headers)
     assert_equal 200, response.code
     assert_equal 0, JSON.parse(response.body)["balance"].to_f
 
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {}, headers)
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
     # CHECK ORDER LIST ================
-    response = RestClient.get("#{ORDER_SERVICE_URL}/api/v1/orders", {USER_ID: user_id})
+    response = RestClient.get("#{ORDER_SERVICE_URL}/api/v1/orders", {}, headers)
     assert_equal 200, response.code
     all_orders = JSON.parse(response.body)
     assert_equal 1, all_orders["buy_orders"].size
@@ -148,23 +171,23 @@ class APITest < Test::Unit::TestCase
       price: 1_0000,
       pair: "btcjpy",
       volume: 5,
-    }, {USER_ID: user_id})
+    }, headers)
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {}, headers)
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
     # CHECK ORDER LIST ================
-    response = RestClient.get("#{ORDER_SERVICE_URL}/api/v1/orders", {USER_ID: user_id})
+    response = RestClient.get("#{ORDER_SERVICE_URL}/api/v1/orders", {}, headers)
     assert_equal 200, response.code
     all_orders = JSON.parse(response.body)
     assert_equal 1, all_orders["buy_orders"].size
     assert_equal 1, all_orders["sell_orders"].size
 
     # CHECK TRADE LIST ================
-    response = RestClient.get("#{TRADE_SERVICE_URL}/api/v1/trades", {USER_ID: user_id})
+    response = RestClient.get("#{TRADE_SERVICE_URL}/api/v1/trades", {}, headers)
     assert_equal 200, response.code
     all_trades = JSON.parse(response.body)
 
@@ -172,20 +195,20 @@ class APITest < Test::Unit::TestCase
     assert_equal 1, all_trades["sell_trades"].size
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/jpy", {}, headers)
     assert_equal 200, response.code
     assert_equal 5_0000, JSON.parse(response.body)["balance"].to_f # 5_0000 jpy still be locked.
 
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {}, headers)
     assert_equal 200, response.code
     assert_equal 10, JSON.parse(response.body)["balance"].to_f
 
     # WITDRAW COIN ================
-    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/withdraw", {currency: "btc", amount: 9}, {USER_ID: user_id})
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/withdraw", {currency: "btc", amount: 9}, headers)
     assert_equal 201, response.code
 
     # CHECK BALANCE ================
-    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {USER_ID: user_id})
+    response = RestClient.get("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/my_balance/btc", {}, headers)
     assert_equal 200, response.code
     assert_equal 1, JSON.parse(response.body)["balance"].to_f
   end
