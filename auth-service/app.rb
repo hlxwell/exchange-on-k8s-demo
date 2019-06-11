@@ -28,3 +28,7 @@ not_found do
     halt 401, "Invalid Token"
   end
 end
+
+get "/health" do
+  "200 OK - #{User.count}"
+end

@@ -17,9 +17,8 @@ before "/api/v1/accounts/*" do
 end
 
 # For readiness check
-get "/" do
-  status 200
-  "ok #{User.count}"
+get "/health" do
+  "200 OK - #{User.count}"
 end
 
 # - POST /api/v1/accounts/deposite {currency,amount}

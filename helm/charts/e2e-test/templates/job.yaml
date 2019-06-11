@@ -30,6 +30,8 @@ spec:
             - -c 
             - bundle exec rake
           env:
+            - name: MODE
+              value: kubernetes
             - name: RACK_ENV
               value: production
             - name: DB_HOST

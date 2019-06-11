@@ -10,8 +10,8 @@ configure do
   Dir["./models/*.rb"].each { |f| require f }
 end
 
-get "/" do
-  "Hello World - Exchange on k8s - #{User.count}"
+get "/health" do
+  "200 OK - #{User.count}"
 end
 
 # - POST /api/v1/users {email, password} return {:id}
