@@ -1,0 +1,11 @@
+source 'https://rubygems.org'
+
+gem 'sinatra'
+gem 'activerecord'
+gem 'pg'
+gem 'rake'
+gem 'bcrypt'
+gem 'rack-test'
+gem 'test-unit'
+gem 'rack'
+gem 'puma'

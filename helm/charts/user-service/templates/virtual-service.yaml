@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "user-service.fullname" . }}
+spec:
+  gateways:
+    - {{ include "user-service.fullname" . }}-gateway
+  hosts:
+    - exchange.memoryforcer.com
+  http:
+    - route:
+      - destination:
+          host: {{ include "user-service.fullname" . }}
+          port:
+            number: 9292
