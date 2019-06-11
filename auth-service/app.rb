@@ -12,6 +12,8 @@ end
 
 # All routes not handled here, will be treat as auth request.
 not_found do
+  halt 200, 'Skipping auth for /api/v1/users and /api/v1/sessions' if request.path_info =~ /^\/api\/v1\/((sessions.*)|(users))$/
+
   # Check if user is valid.
   token = request.env["HTTP_TOKEN"]
   puts "=== Authenticate TOKEN: '#{token}' for PATH: '#{request.path_info}'"
