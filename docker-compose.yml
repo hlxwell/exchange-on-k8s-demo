@@ -100,7 +100,8 @@ services:
       - -c 
       - sleep 5; bundle exec rake
     environment:
-      RACK_ENV: test
+      RACK_ENV: production
+      MODE: docker-compose
       DB_HOST: db
       DB_PORT: 5432
     restart: on-failure
