@@ -1,13 +1,17 @@
 auth-service:
+  replicaCount: 1
   enabled: true
 
 account-service:
+  replicaCount: 1
   enabled: true
 
 order-service:
+  replicaCount: 1
   enabled: true
 
 trade-service:
+  replicaCount: 1
   enabled: true
 
 e2e-test:

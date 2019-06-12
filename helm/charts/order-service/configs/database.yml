@@ -1,0 +1,9 @@
+production:
+  adapter: postgresql
+  database: exchange-demo-prod
+  pool: 16
+  timeout: 5000
+  username: postgres
+  password: 
+  host: <%= ENV['DB_HOST'] %>
+  port: <%= ENV['DB_PORT'] %>

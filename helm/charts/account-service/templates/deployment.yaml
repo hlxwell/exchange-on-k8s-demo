@@ -23,6 +23,13 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 20m
+              memory:	300Mi
+            limits:
+              cpu: 100m
+              memory:	300Mi
           command:
             - /bin/ash 
             - -c 
@@ -46,3 +53,11 @@ spec:
             httpGet:
               path: /health
               port: http
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/database.yml
+              subPath: database.yml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "account-service.fullname" . }}-configmap
