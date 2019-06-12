@@ -17,10 +17,10 @@ class AppTest < Test::Unit::TestCase
     User.register("xxx@xxx.com", "password")
     token = User.login("xxx@xxx.com", "password")
 
-    get "/api/v1/sessions/wrong-token/verify"
+    get "/api/v1/any-path-should-be-ok"
     assert_equal 401, last_response.status
 
-    post "/api/v1/orders", {amount: 100, pair: "btcjpy"}, {"HTTP_TOKEN" => token}
+    post "/api/v1/any-path-should-be-ok", {amount: 100, pair: "btcjpy"}, {"HTTP_TOKEN" => token}
     assert_equal 200, last_response.status
   end
 end

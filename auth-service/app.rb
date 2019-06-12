@@ -12,7 +12,7 @@ end
 
 # All routes not handled here, will be treat as auth request.
 not_found do
-  halt 200, 'Skipping auth for /api/v1/users and /api/v1/sessions' if request.path_info =~ /^\/api\/v1\/((sessions.*)|(users))$/
+  halt 200, "Skipping auth for /api/v1/users and /api/v1/sessions" if request.path_info =~ /^\/api\/v1\/((sessions.*)|(users))$/
 
   # Check if user is valid.
   token = request.env["HTTP_TOKEN"]
@@ -25,7 +25,7 @@ not_found do
   u = User.find_by(token: token)
   if u.try(:persisted?)
     response.headers["user_id"] = u.id
-    halt 200, {id: u.id, email: u.email}.to_json
+    halt 200, {user_id: u.id, email: u.email}.to_json
   else
     halt 401, "Invalid Token"
   end

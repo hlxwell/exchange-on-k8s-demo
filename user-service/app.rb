@@ -20,7 +20,7 @@ post "/api/v1/users" do
   password = params[:password]
   user = User.register(email, password)
   if user.persisted?
-    halt 201, {id: user.id}.to_json
+    halt 201, {user_id: user.id}.to_json
   else
     error 403, user.errors.to_json
   end
@@ -38,7 +38,7 @@ end
 get "/api/v1/sessions/:token/verify" do
   u = User.find_by(token: params[:token])
   if u.try(:persisted?)
-    halt 200, {id: u.id, email: u.email}.to_json
+    halt 200, {user_id: u.id, email: u.email}.to_json
   else
     error 401, "Invalid Token"
   end

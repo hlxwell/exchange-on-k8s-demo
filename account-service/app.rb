@@ -26,7 +26,7 @@ post "/api/v1/accounts/deposite" do
   deposite = @user.deposites.new(currency: params[:currency], amount: params[:amount])
   if deposite.save
     status 201
-    {id: deposite.id}.to_json
+    {deposite_id: deposite.id}.to_json
   else
     error 403, deposite.errors.messages.to_json
   end
@@ -37,7 +37,7 @@ post "/api/v1/accounts/withdraw" do
   withdraw = @user.withdraws.new(currency: params[:currency], amount: params[:amount])
   if withdraw.save
     status 201
-    {id: withdraw.id}.to_json
+    {withdraw_id: withdraw.id}.to_json
   else
     error 403, withdraw.errors.messages.to_json
   end
