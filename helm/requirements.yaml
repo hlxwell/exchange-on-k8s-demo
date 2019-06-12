@@ -3,6 +3,12 @@ dependencies:
     repository: auth-service
     version: 0.1.0
     condition: auth-service.enabled
+    alias: auth-service-blue
+  - name: auth-service
+    repository: auth-service
+    version: 0.1.0
+    condition: auth-service.enabled
+    alias: auth-service-green
   - name: account-service
     repository: account-service
     version: 0.1.0

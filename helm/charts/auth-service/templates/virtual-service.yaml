@@ -13,3 +13,11 @@ spec:
           host: {{ include "auth-service.fullname" . }}
           port:
             number: 9292
+          subset: v1
+        weight: 80
+      - destination:
+          host: {{ include "auth-service.fullname" . }}
+          port:
+            number: 9292
+          subset: v2
+        weight: 20

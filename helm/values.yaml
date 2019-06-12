@@ -1,24 +1,42 @@
-auth-service:
+auth-service-blue:
   replicaCount: 1
   enabled: true
+  image:
+    tag: v1
+
+auth-service-green:
+  replicaCount: 1
+  enabled: true
+  image:
+    tag: v2
 
 account-service:
   replicaCount: 1
   enabled: true
+  image:
+    tag: v1
 
 order-service:
   replicaCount: 1
   enabled: true
+  image:
+    tag: v1
 
 trade-service:
   replicaCount: 1
   enabled: true
+  image:
+    tag: v1
 
 e2e-test:
-  enabled: true
+  enabled: false
+  image:
+    tag: latest
 
 db-migrator:
   enabled: true
+  image:
+    tag: v1
 
 postgresql:
   enabled: true
