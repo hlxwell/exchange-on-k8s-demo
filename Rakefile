@@ -30,13 +30,10 @@ task :bundle do
 end
 
 desc 'Build and push docker'
-task :build_and_push do
-  # threads = []
+task :build_and_push, [:version] do |task, args|
+  version = args[:version] || 'latest'
   ["e2e-test", "db-migrator", "user-service", "auth-service", "trade-service", "order-service", "account-service"].each do |proj|
-    # threads << Thread.new do
-    IO.popen("docker build -t gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj} ./#{proj}/", "r").each_line { |line| puts line }
-    IO.popen("gcloud docker -- push gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj}", "r").each_line { |line| puts line }
-    # end
+    IO.popen("docker build -t gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj}:#{version} ./#{proj}/", "r").each_line { |line| puts line }
+    IO.popen("gcloud docker -- push gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj}:#{version}", "r").each_line { |line| puts line }
   end
-  # threads.each &:join
 end
