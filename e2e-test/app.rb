@@ -31,11 +31,19 @@ class APITest < Test::Unit::TestCase
   end
 
   def setup
+    puts "Clearning Up Data:"
+
     User.destroy_all
     Order.destroy_all
     Trade.destroy_all
     Withdraw.destroy_all
     Deposite.destroy_all
+
+    puts "User: #{User.count}"
+    puts "Order: #{Order.count}"
+    puts "Trade: #{Trade.count}"
+    puts "Withdraw: #{Withdraw.count}"
+    puts "Deposite: #{Deposite.count}"
   end
 
   def test_performance
@@ -47,7 +55,7 @@ class APITest < Test::Unit::TestCase
       "email" => email,
       "password" => "password",
     })
-    user_id = JSON.parse(response.body)["id"]
+    user_id = JSON.parse(response.body)["user_id"]
 
     # LOGIN USER =================
     response = RestClient.post("#{USER_SERVICE_URL}/api/v1/sessions", {
@@ -61,27 +69,35 @@ class APITest < Test::Unit::TestCase
     headers[:token] = token
 
     # CHARGE MONEY ===============
-    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "jpy", amount: 10_0000}, headers)
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "jpy", amount: 10_0000_0000}, headers)
     assert_equal 201, response.code
-    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "btc", amount: 10}, headers)
+    response = RestClient.post("#{ACCOUNT_SERVICE_URL}/api/v1/accounts/deposite", {currency: "btc", amount: 10_0000}, headers)
     assert_equal 201, response.code
 
     Benchmark.bm do |x|
       x.report do
         10.times do
-          RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
-            side: "sell",
-            price: 1_0000,
-            pair: "btcjpy",
-            volume: 10,
-          }, headers)
+          begin
+            RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
+              side: "sell",
+              price: 1_0000,
+              pair: "btcjpy",
+              volume: 10,
+            }, headers)
+          rescue RestClient::ExceptionWithResponse => e
+            puts "SELL --- #{e.response.body}"
+          end
 
-          RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
-            side: "buy",
-            price: 1_0000,
-            pair: "btcjpy",
-            volume: 10,
-          }, headers)
+          begin
+            RestClient.post("#{ORDER_SERVICE_URL}/api/v1/orders", {
+              side: "buy",
+              price: 1_0000,
+              pair: "btcjpy",
+              volume: 10,
+            }, headers)
+          rescue RestClient::ExceptionWithResponse => e
+            puts "BUY --- #{e.response.body}"
+          end
         end
       end
     end
@@ -97,7 +113,7 @@ class APITest < Test::Unit::TestCase
       "password" => "password",
     })
 
-    user_id = JSON.parse(response.body)["id"]
+    user_id = JSON.parse(response.body)["user_id"]
     assert_not_nil user_id
     assert_equal 201, response.code
 
