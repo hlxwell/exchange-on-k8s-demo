@@ -10,9 +10,9 @@ services:
   # STAGE 2 ================================================
   db-migrator:
     build: ./db-migrator
-    command: 
-      - /bin/bash 
-      - -c 
+    command:
+      - /bin/bash
+      - -c
       - sleep 3 && bundle exec rake db:create; bundle exec rake db:migrate; bundle exec rake db:seed
     environment:
       ENV: production
@@ -25,8 +25,8 @@ services:
   auth-service:
     build: ./auth-service
     command:
-      - /bin/ash 
-      - -c 
+      - /bin/ash
+      - -c
       - bundle exec puma
     environment:
       RACK_ENV: production
@@ -39,8 +39,8 @@ services:
   user-service:
     build: ./user-service
     command:
-      - /bin/ash 
-      - -c 
+      - /bin/ash
+      - -c
       - bundle exec puma
     environment:
       RACK_ENV: production
@@ -53,8 +53,8 @@ services:
   account-service:
     build: ./account-service
     command:
-      - /bin/ash 
-      - -c 
+      - /bin/ash
+      - -c
       - bundle exec puma
     environment:
       RACK_ENV: production
@@ -67,8 +67,8 @@ services:
   order-service:
     build: ./order-service
     command:
-      - /bin/ash 
-      - -c 
+      - /bin/ash
+      - -c
       - bundle exec puma
     environment:
       RACK_ENV: production
@@ -81,8 +81,8 @@ services:
   trade-service:
     build: ./trade-service
     command:
-      - /bin/ash 
-      - -c 
+      - /bin/ash
+      - -c
       - bundle exec puma
     environment:
       RACK_ENV: production
@@ -96,8 +96,8 @@ services:
   e2e-test:
     build: ./e2e-test
     command:
-      - /bin/ash 
-      - -c 
+      - /bin/ash
+      - -c
       - sleep 5; bundle exec rake
     environment:
       RACK_ENV: production

@@ -31,14 +31,14 @@ post "/api/v1/orders" do
   elsif params[:side] == "sell"
     orders = @user.sell_orders
   else
-    error 403, {message: "Wrong :side parameter."}.to_json
+    halt 400, {message: "Wrong :side parameter."}.to_json
   end
 
   order = orders.new(pair: params[:pair], price: params[:price], volume: params[:volume])
   if order.save
     halt 201, {order_id: order.id}.to_json
   else
-    error 403, order.errors.messages.to_json
+    halt 403, order.errors.messages.to_json
   end
 end
 
