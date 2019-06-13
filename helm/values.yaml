@@ -38,10 +38,3 @@ db-migrator:
   image:
     tag: v1
 
-postgresql:
-  enabled: true
-  postgresqlUsername: postgres
-  postgresqlPassword: postgres
-  pgHbaConfiguration: |-
-    local all all trust
-    host all all localhost trust
