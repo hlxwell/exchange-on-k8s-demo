@@ -11,9 +11,8 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "*"
-        - istio.memoryforcer.com
         - exchange.memoryforcer.com
+        - "*.exchange.memoryforcer.com"
       # tls:
       #   httpsRedirect: true
     # - port:

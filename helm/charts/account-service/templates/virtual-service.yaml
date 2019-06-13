@@ -6,7 +6,10 @@ spec:
   gateways:
     - {{ include "account-service.fullname" . }}-gateway
   hosts:
+    {{- if .Values.active }}
     - exchange.memoryforcer.com
+    {{- end }}
+    - "{{ .Values.image.tag }}.exchange.memoryforcer.com"
   http:
     - match:
         - uri:
