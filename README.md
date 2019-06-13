@@ -22,3 +22,7 @@ $ apk add docker --update-cache --repository http://mirrors.ustc.edu.cn/alpine/v
 --repository http://mirrors.ustc.edu.cn/alpine/v3.4/main/
 --allow-untrusted
 ```
+
+```
+kubectl label namespace exchange-on-k8s-v1 istio-injection=enabled
+```
