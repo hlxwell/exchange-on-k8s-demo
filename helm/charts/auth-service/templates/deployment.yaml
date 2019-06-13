@@ -7,16 +7,19 @@ metadata:
     helm.sh/chart: {{ include "auth-service.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    version: {{ .Values.image.tag }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
+      app: {{ include "auth-service.name" . }}
       app.kubernetes.io/name: {{ include "auth-service.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
       version: {{ .Values.image.tag }}
   template:
     metadata:
       labels:
+        app: {{ include "auth-service.name" . }}
         app.kubernetes.io/name: {{ include "auth-service.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         version: {{ .Values.image.tag }}
@@ -40,9 +43,13 @@ spec:
             - name: RACK_ENV
               value: production
             - name: DB_HOST
-              value: {{ .Release.Name }}-postgresql
+              value: {{ .Values.db.host }}
             - name: DB_PORT
-              value: "5432"
+              value: {{ .Values.db.port }}
+            - name: DB_USERNAME
+              value: {{ .Values.db.username }}
+            - name: DB_PASSWORD
+              value: {{ .Values.db.password }}
           ports:
             - name: http
               containerPort: 9292

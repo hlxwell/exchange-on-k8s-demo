@@ -20,7 +20,7 @@ spec:
           command:
             - /bin/bash
             - -c
-            - until pg_isready -h {{ .Release.Name }}-postgresql -p 5432; do echo waiting for database; sleep 1; done;
+            - until pg_isready -h {{ .Values.db.host }} -p 5432; do echo waiting for database; sleep 1; done;
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -33,6 +33,18 @@ spec:
             - name: ENV
               value: production
             - name: DB_HOST
-              value: {{ .Release.Name }}-postgresql
+              value: {{ .Values.db.host }}
             - name: DB_PORT
-              value: "5432"
+              value: {{ .Values.db.port }}
+            - name: DB_USERNAME
+              value: {{ .Values.db.username }}
+            - name: DB_PASSWORD
+              value: {{ .Values.db.password }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/database.yml
+              subPath: database.yml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "db-migrator.fullname" . }}-configmap

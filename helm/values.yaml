@@ -1,40 +1,42 @@
-auth-service-blue:
-  replicaCount: 1
-  enabled: true
-  image:
-    tag: v1
-
-auth-service-green:
-  replicaCount: 1
-  enabled: true
+default: &default
+  active: true
+  db:
+    host: postgresql-postgresql.postgresql.svc.cluster.local
+    port: 5432
+    username: postgres
+    password: postgres
   image:
     tag: v2
+
+auth-service:
+  replicaCount: 1
+  enabled: true
+  <<: *default
 
 account-service:
   replicaCount: 1
   enabled: true
-  image:
-    tag: v1
+  <<: *default
+
+user-service:
+  replicaCount: 1
+  enabled: true
+  <<: *default
 
 order-service:
   replicaCount: 1
   enabled: true
-  image:
-    tag: v1
+  <<: *default
 
 trade-service:
   replicaCount: 1
   enabled: true
-  image:
-    tag: v1
+  <<: *default
 
 e2e-test:
   enabled: false
-  image:
-    tag: latest
+  <<: *default
 
 db-migrator:
   enabled: true
-  image:
-    tag: v1
-
+  <<: *default
