@@ -14,11 +14,16 @@
 ## account-service
 - GET /api/v1/my_balance?currency=*
 
-# Alpine options
+# Alpine options to allow untrusted repo
 
 ```
-$ apk add docker --update-cache --repository http://mirrors.ustc.edu.cn/alpine/v3.4/main/ --allow-untrusted
---update-cache
---repository http://mirrors.ustc.edu.cn/alpine/v3.4/main/
---allow-untrusted
+$ apk add docker \
+  --update-cache \
+  --repository http://mirrors.ustc.edu.cn/alpine/v3.4/main/ \
+  --allow-untrusted
 ```
+
+# TODO
+
+- CI (gitlab)
+- CD (GKE)
