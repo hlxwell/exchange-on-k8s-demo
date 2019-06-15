@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "e2e-test.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "e2e-test.name" . }}
+    helm.sh/chart: {{ include "e2e-test.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: check-db-ready
+          image: postgres:latest
+          command:
+            - /bin/bash
+            - -c
+            - until pg_isready -h {{ .Values.db.host }} -p 5432; do echo waiting for database; sleep 1; done;
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/ash 
+            - -c 
+            - bundle exec rake
+          env:
+            - name: MODE
+              value: kubernetes
+            - name: RACK_ENV
+              value: production
+            - name: DB_HOST
+              value: {{ .Values.db.host }}
+            - name: DB_PORT
+              value: {{ .Values.db.port }}
+            - name: DB_USERNAME
+              value: {{ .Values.db.username }}
+            - name: DB_PASSWORD
+              value: {{ .Values.db.password }}
+            - name: AUTH_SERVICE_URL
+              value: http://{{ .Release.Name }}-auth-service:9292
+            - name: ORDER_SERVICE_URL
+              value: http://{{ .Release.Name }}-order-service:9292
+            - name: TRADE_SERVICE_URL
+              value: http://{{ .Release.Name }}-trade-service:9292
+            - name: ACCOUNT_SERVICE_URL
+              value: http://{{ .Release.Name }}-account-service:9292
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/database.yml
+              subPath: database.yml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "e2e-test.fullname" . }}-configmap

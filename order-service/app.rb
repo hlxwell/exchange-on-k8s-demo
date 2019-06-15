@@ -12,10 +12,15 @@ configure do
   Dir["./models/*.rb"].each { |f| require f }
 end
 
-before do
+before "/api/*" do
   user_id = request.env["HTTP_USER_ID"]
   @user = User.find_by(id: user_id)
   halt 401, {message: "User #{user_id} not found."}.to_json if @user.nil?
+end
+
+# For readiness check
+get "/health" do
+  "200 OK - #{User.count}"
 end
 
 # - POST /api/v1/orders {pair,side,price,volume}
@@ -26,15 +31,14 @@ post "/api/v1/orders" do
   elsif params[:side] == "sell"
     orders = @user.sell_orders
   else
-    halt 403, {message: "Wrong :side parameter."}.to_json
+    halt 400, {message: "Wrong :side parameter."}.to_json
   end
 
   order = orders.new(pair: params[:pair], price: params[:price], volume: params[:volume])
   if order.save
-    status 201
-    {id: order.id}.to_json
+    halt 201, {order_id: order.id}.to_json
   else
-    error 403, order.errors.messages.to_json
+    halt 403, order.errors.messages.to_json
   end
 end
 

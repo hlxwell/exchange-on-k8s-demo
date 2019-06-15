@@ -1,0 +1,42 @@
+default: &default
+  active: true
+  db:
+    host: postgresql-postgresql.postgresql.svc.cluster.local
+    port: 5432
+    username: postgres
+    password: postgres
+  image:
+    tag: v2
+
+auth-service:
+  replicaCount: 1
+  enabled: true
+  <<: *default
+
+account-service:
+  replicaCount: 1
+  enabled: true
+  <<: *default
+
+user-service:
+  replicaCount: 1
+  enabled: true
+  <<: *default
+
+order-service:
+  replicaCount: 1
+  enabled: true
+  <<: *default
+
+trade-service:
+  replicaCount: 1
+  enabled: true
+  <<: *default
+
+e2e-test:
+  enabled: false
+  <<: *default
+
+db-migrator:
+  enabled: true
+  <<: *default

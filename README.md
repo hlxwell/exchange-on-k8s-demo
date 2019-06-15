@@ -12,9 +12,9 @@
 - GET /api/v1/orders
 
 ## account-service
-- GET /api/v1/my_balance?currency=*
+- GET /api/v1/accounts/my_balance?currency=*
 
-# Alpine options to allow untrusted repo
+## Alpine options to allow untrusted repo
 
 ```
 $ apk add docker \
@@ -23,7 +23,14 @@ $ apk add docker \
   --allow-untrusted
 ```
 
+## Enable istio-injection
+
+```
+kubectl label namespace exchange-on-k8s-v1 istio-injection=enabled
+```
+
 # TODO
 
 - CI (gitlab)
 - CD (GKE)
+

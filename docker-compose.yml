@@ -10,9 +10,9 @@ services:
   # STAGE 2 ================================================
   db-migrator:
     build: ./db-migrator
-    command: 
-      - /bin/bash 
-      - -c 
+    command:
+      - /bin/bash
+      - -c
       - sleep 3 && bundle exec rake db:create; bundle exec rake db:migrate; bundle exec rake db:seed
     environment:
       ENV: production
@@ -25,9 +25,9 @@ services:
   auth-service:
     build: ./auth-service
     command:
-      - /bin/ash 
-      - -c 
-      - bundle exec rackup
+      - /bin/ash
+      - -c
+      - bundle exec puma
     environment:
       RACK_ENV: production
       DB_HOST: db
@@ -36,12 +36,12 @@ services:
       - db-migrator
     ports:
       - "3001:9292"
-  account-service:
-    build: ./account-service
+  user-service:
+    build: ./user-service
     command:
-      - /bin/ash 
-      - -c 
-      - bundle exec rackup
+      - /bin/ash
+      - -c
+      - bundle exec puma
     environment:
       RACK_ENV: production
       DB_HOST: db
@@ -50,12 +50,12 @@ services:
       - db-migrator
     ports:
       - "3002:9292"
-  order-service:
-    build: ./order-service
+  account-service:
+    build: ./account-service
     command:
-      - /bin/ash 
-      - -c 
-      - bundle exec rackup
+      - /bin/ash
+      - -c
+      - bundle exec puma
     environment:
       RACK_ENV: production
       DB_HOST: db
@@ -64,12 +64,12 @@ services:
       - db-migrator
     ports:
       - "3003:9292"
-  trade-service:
-    build: ./trade-service
+  order-service:
+    build: ./order-service
     command:
-      - /bin/ash 
-      - -c 
-      - bundle exec rackup
+      - /bin/ash
+      - -c
+      - bundle exec puma
     environment:
       RACK_ENV: production
       DB_HOST: db
@@ -78,15 +78,30 @@ services:
       - db-migrator
     ports:
       - "3004:9292"
+  trade-service:
+    build: ./trade-service
+    command:
+      - /bin/ash
+      - -c
+      - bundle exec puma
+    environment:
+      RACK_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      - db-migrator
+    ports:
+      - "3005:9292"
   # STAGE 4 ================================================
   e2e-test:
     build: ./e2e-test
     command:
-      - /bin/ash 
-      - -c 
+      - /bin/ash
+      - -c
       - sleep 5; bundle exec rake
     environment:
       RACK_ENV: production
+      MODE: docker-compose
       DB_HOST: db
       DB_PORT: 5432
     restart: on-failure
@@ -95,3 +110,4 @@ services:
       - account-service
       - order-service
       - trade-service
+      - user-service

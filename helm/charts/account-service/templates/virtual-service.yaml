@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "account-service.fullname" . }}
+spec:
+  gateways:
+    - {{ include "account-service.fullname" . }}-gateway
+  hosts:
+    {{- if .Values.active }}
+    - exchange.memoryforcer.com
+    {{- end }}
+    - "{{ .Values.image.tag }}.exchange.memoryforcer.com"
+  http:
+    - match:
+        - uri:
+            prefix: /api/v1/accounts
+      route:
+        - destination:
+            host: {{ include "account-service.fullname" . }}
+            port:
+              number: 9292

@@ -1,0 +1,71 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "order-service.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "order-service.name" . }}
+    helm.sh/chart: {{ include "order-service.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "order-service.name" . }}
+      app.kubernetes.io/name: {{ include "order-service.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      version: {{ .Values.image.tag }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "order-service.name" . }}
+        app.kubernetes.io/name: {{ include "order-service.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        version: {{ .Values.image.tag }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 20m
+              memory:	300Mi
+            limits:
+              cpu: 100m
+              memory:	300Mi
+          command:
+            - /bin/ash 
+            - -c 
+            - bundle exec puma
+          env:
+            - name: RACK_ENV
+              value: production
+            - name: DB_HOST
+              value: {{ .Values.db.host }}
+            - name: DB_PORT
+              value: {{ .Values.db.port }}
+            - name: DB_USERNAME
+              value: {{ .Values.db.username }}
+            - name: DB_PASSWORD
+              value: {{ .Values.db.password }}
+          ports:
+            - name: http
+              containerPort: 9292
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/database.yml
+              subPath: database.yml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "order-service.fullname" . }}-configmap

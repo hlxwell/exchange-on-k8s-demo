@@ -1,0 +1,19 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "user-service.fullname" . }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: {{ include "user-service.fullname" . }}
+  minReplicas: 1
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 20
+  # metrics:
+  # - type: Resource
+  #   resource:
+  #     name: cpu
+  #     target:
+  #       type: AverageUtilization
+  #       averageUtilization: 10

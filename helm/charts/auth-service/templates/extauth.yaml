@@ -1,0 +1,40 @@
+{{- if .Values.active -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: {{ include "auth-service.fullname" . }}-ext-authz
+spec:
+  workloadLabels:
+    istio: ingressgateway
+  filters:
+  - insertPosition:
+      index: FIRST
+    listenerMatch:
+      listenerType: GATEWAY
+      listenerProtocol: ALL
+    filterType: HTTP
+    filterName: envoy.ext_authz
+    filterConfig:
+      http_service:
+        server_uri:
+          uri: http://{{ include "auth-service.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:9292
+          cluster: outbound|9292||{{ include "auth-service.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          timeout: 0.25s
+          failure_mode_allow: false
+        authorization_request:
+          allowed_headers:
+            patterns: 
+              - exact: token
+              - exact: Authorization
+              - exact: User-Agent
+        authorization_response:
+          allowed_upstream_headers:
+            patterns: 
+              - exact: user_id
+              - exact: Location
+              - exact: Authorization
+          # allowed_client_headers':
+          #   patterns:
+          #     - exact: Location
+          #     - exact: Authorization
+{{- end -}}

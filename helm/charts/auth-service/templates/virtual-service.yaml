@@ -1,0 +1,48 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "auth-service.fullname" . }}
+spec:
+  gateways:
+    - {{ include "auth-service.fullname" . }}-gateway
+  hosts:
+    {{- if .Values.active }}
+    - exchange.memoryforcer.com
+    {{- end }}
+    - "{{ .Values.image.tag }}.exchange.memoryforcer.com"
+  http:
+    - route:
+      - destination:
+          host: {{ include "auth-service.fullname" . }}
+          port:
+            number: 9292
+
+      # - destination:
+      #     host: {{ include "auth-service.fullname" . }}
+      #     port:
+      #       number: 9292
+      #     subset: v1
+      #   weight: 80
+      # - destination:
+      #     host: {{ include "auth-service.fullname" . }}
+      #     port:
+      #       number: 9292
+      #     subset: v2
+      #   weight: 20
+
+      ### Fault Injection
+      # fault:
+      #   delay:
+      #     percent: 50
+      #     fixedDelay: 1s
+      #   abort:
+      #     httpStatus: 500
+      #     percent: 50
+      #
+      ### Timeout
+      # timeout: 1s
+      #
+      ### Retry
+      # retries:
+      #   attempts: 3
+      #   perTryTimeout: 1s
