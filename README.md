@@ -33,4 +33,6 @@ kubectl label namespace exchange-on-k8s-v1 istio-injection=enabled
 
 - CI (gitlab)
 - CD (GKE)
+- Release flow, control the production operation permission.
+- Add centralized trading pair config which can be used by all the services.
 
