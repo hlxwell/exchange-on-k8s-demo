@@ -4,5 +4,5 @@ gem 'test-unit'
 gem 'rest-client'
 gem 'activerecord'
 gem 'pg'
-gem 'rake'
+gem "rake", "~> 13"
 gem 'bcrypt'

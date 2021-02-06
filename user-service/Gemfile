@@ -3,9 +3,10 @@ source 'https://rubygems.org'
 gem 'sinatra'
 gem 'activerecord', "~> 6"
 gem 'pg'
-gem 'rake'
+gem "rake", "~> 13"
 gem 'bcrypt'
 gem 'rack-test'
 gem 'test-unit'
 gem 'rack'
 gem 'puma', "~> 5"
+
