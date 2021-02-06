@@ -7,5 +7,5 @@ gem "rake", "~> 13"
 gem 'bcrypt'
 gem 'rack-test'
 gem 'test-unit'
-gem 'rack'
+gem 'rack', "~> 2.2"
 gem 'puma', "~> 5"

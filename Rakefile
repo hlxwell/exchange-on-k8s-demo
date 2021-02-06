@@ -1,5 +1,5 @@
 task :default => :test
-desc 'Test'
+desc "Test"
 task :test do
   puts `cd db-migrator && RAILS_ENV=development rspec`
   puts `cd auth-service && RACK_ENV=development rake`
@@ -9,7 +9,7 @@ task :test do
   puts `cd account-service && RACK_ENV=development rake`
 end
 
-desc 'Link Model'
+desc "Link Model"
 task :link_model do
   puts `cd e2e-test && rm -rf models && mkdir models && ln ../models/* models/`
   puts `cd db-migrator && rm -rf app/models && mkdir -p app/models && ln ../models/* app/models/`
@@ -20,7 +20,7 @@ task :link_model do
   puts `cd account-service && rm -rf models && mkdir models && ln ../models/* models/`
 end
 
-desc 'Bundle'
+desc "Bundle"
 task :bundle do
   puts `cd auth-service && RACK_ENV=development bundle`
   puts `cd trade-service && RACK_ENV=development bundle`
@@ -29,9 +29,9 @@ task :bundle do
   puts `cd account-service && RACK_ENV=development bundle`
 end
 
-desc 'Build and push docker'
+desc "Build and push docker"
 task :build_and_push, [:version] do |task, args|
-  version = args[:version] || 'latest'
+  version = args[:version] || "latest"
   ["e2e-test", "db-migrator", "user-service", "auth-service", "trade-service", "order-service", "account-service"].each do |proj|
     IO.popen("docker build -t gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj}:#{version} ./#{proj}/", "r").each_line { |line| puts line }
     IO.popen("gcloud docker -- push gcr.io/bitsx-vc-dev-poc/exchange-on-k8s/#{proj}:#{version}", "r").each_line { |line| puts line }
