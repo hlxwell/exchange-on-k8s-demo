@@ -7,7 +7,7 @@ gem 'pg'
 gem 'pry'
 gem "nokogiri", ">= 1.10.4"
 
-group :development, :test do  
+group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
 end
